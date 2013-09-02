@@ -172,21 +172,24 @@
 					};
 
                 if (map.iconClass) {
-                    $toastElement.addClass(options.toastClass).addClass(iconClass);
+                    addClass($toastElement, options.toastClass);
+					addClass($toastElement, iconClass);
                 }
 
                 if (map.title) {
-                    $titleElement.append(map.title).addClass(options.titleClass);
+                    $titleElement.append(map.title);
+					addClass($titleElement, options.titleClass);
                     $toastElement.append($titleElement);
                 }
 
                 if (map.message) {
-                    $messageElement.append(map.message).addClass(options.messageClass);
+                    $messageElement.append(map.message);
+					addClass($messageElement, options.messageClass);
                     $toastElement.append($messageElement);
                 }
 
                 if (options.closeButton) {
-                    $closeElement.addClass('toast-close-button');
+                    addClass($closeElement, 'toast-close-button');
                     $toastElement.prepend($closeElement);
                 }
 
@@ -263,8 +266,8 @@
                     return $container;
                 }
                 $container = $('<div/>')
-					.attr('id', options.containerId)
-					.addClass(options.positionClass);
+					.attr('id', options.containerId);
+				addClass($container, options.positionClass);
                 $container.appendTo($(options.target));
                 return $container;
             }
@@ -284,6 +287,16 @@
                     $container.remove();
                 }
             }
+			
+			function addClass(element, newClass) {
+				for (var i = 0; i < element.length; ++i) {
+					var currentClass = element[i].getAttribute('class');
+					if (currentClass) {
+						newClass = currentClass + ' ' + newClass;
+					}
+					element[i].setAttribute('class', newClass);
+				}
+			}
             //#endregion
 
         })();
