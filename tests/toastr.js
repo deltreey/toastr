@@ -149,6 +149,7 @@
             function notify(map) {
                 var
 					options = getOptions(),
+					div = document.createElement('div'),
 					iconClass = map.iconClass || options.iconClass;
 
                 if (typeof (map.optionsOverride) !== 'undefined') {
@@ -162,8 +163,8 @@
                 var
 					intervalId = null,
 					$toastElement = $('<div/>'),
-					$titleElement = $('<div/>'),
-					$messageElement = $('<div/>'),
+					$titleElement = div.cloneNode(false),
+					$messageElement = div.cloneNode(false),
 				    $closeElement = $(options.closeHtml),
 					response = {
 					    toastId: toastId,
@@ -179,15 +180,19 @@
                 }
 
                 if (map.title) {
-                    $titleElement.append(map.title);
+                    $titleElement.innerHTML = map.title;
 					addClass($titleElement, options.titleClass);
-                    $toastElement.append($titleElement);
+					for (var i = 0; i < $toastElement.length; ++i) {
+						$toastElement[i].appendChild($titleElement);
+					}
                 }
 
                 if (map.message) {
-                    $messageElement.append(map.message);
+                    $messageElement.innerHTML = map.message;
 					addClass($messageElement, options.messageClass);
-                    $toastElement.append($messageElement);
+					for (var i = 0; i < $toastElement.length; ++i) {
+						$toastElement[i].appendChild($messageElement);
+					}
                 }
 
                 if (options.closeButton) {
@@ -199,7 +204,11 @@
                 if (options.newestOnTop) {
                     $container.prepend($toastElement);
                 } else {
-                    $container.append($toastElement);
+					for (var i = 0; i < $container.length; ++i) {
+						for (var j = 0; j < $toastElement.length; ++j) {
+							$container[i].appendChild($toastElement[j]);
+						}
+					}
                 }
 
 
@@ -291,17 +300,30 @@
             }
 			
 			function addClass(element, newClass) {
-				for (var i = 0; i < element.length; ++i) {
-					var currentClass = element[i].getAttribute('class');
+				if (typeof (element).innerHTML === "string") {
+					var currentClass = element.getAttribute('class');
 					if (currentClass) {
 						newClass = currentClass + ' ' + newClass;
 					}
-					element[i].setAttribute('class', newClass);
+					element.setAttribute('class', newClass);
+				}
+				else {
+					for (var i = 0; i < element.length; ++i) {
+						var currentClass = element[i].getAttribute('class');
+						if (currentClass) {
+							newClass = currentClass + ' ' + newClass;
+						}
+						element[i].setAttribute('class', newClass);
+					}
 				}
 			}
 			
 			function remove(element) {
-				if (element.length > 0) {
+				if (typeof (element).innerHTML === "string") {
+					var parent = element.parentNode;
+					parent.removeChild(element);
+				}
+				else if (element.length > 0) {
 					for (var i = 0; i < element.length; ++i) {
 						var parent = element[i].parentNode;
 						if (parent) {
