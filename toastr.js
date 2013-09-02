@@ -95,7 +95,9 @@
                     $container[options.hideMethod]({
                         duration: options.hideDuration,
                         easing: options.hideEasing,
-                        complete: function () { $container.remove(); }
+                        complete: function () {
+							remove($container);
+						}
                     });
                 }
             }
@@ -281,10 +283,10 @@
                 if ($toastElement.is(':visible')) {
                     return;
                 }
-                $toastElement.remove();
+                remove($toastElement);
                 $toastElement = null;
                 if ($container.children().length === 0) {
-                    $container.remove();
+                    remove($container);
                 }
             }
 			
@@ -295,6 +297,17 @@
 						newClass = currentClass + ' ' + newClass;
 					}
 					element[i].setAttribute('class', newClass);
+				}
+			}
+			
+			function remove(element) {
+				if (element.length > 0) {
+					for (var i = 0; i < element.length; ++i) {
+						var parent = element[i].parentNode;
+						if (parent) {
+							parent.removeChild(element[i]);
+						}
+					}
 				}
 			}
             //#endregion
